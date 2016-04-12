@@ -1,5 +1,8 @@
 /* jshint node: true */
 
+// load .env vars
+require('dotenv').config();
+
 module.exports = function(environment) {
   var ENV = {
     modulePrefix: 'deploy-test',
