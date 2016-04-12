@@ -3,6 +3,44 @@
 This README outlines the details of collaborating on this Ember application.
 A short introduction of this app could easily go here.
 
+## Consuming app in static site
+
+Add this script tag to the bottom of your `head`:
+
+```
+<script type="text/javascript">
+  $.get('https://s3.amazonaws.com/<bucket-name>/index.json', function(data) {
+    var domain = 'https://s3.amazonaws.com/<bucket-name>/';
+
+    var meta = data.meta[0];
+
+    $("head").append($('<meta />').attr({
+      name: meta.name,
+      content: meta.content
+    }));
+
+    var link;
+    var vendorjs = data.script[0].src
+    var assetsjs = data.script[1].src
+
+    link = domain + vendorjs;
+    $.getScript(link, function() {
+      link = domain + assetsjs;
+      $.getScript(link);
+    });
+  });
+</script>
+```
+
+And add the DOM element for the Ember app to hook onto:
+
+```
+<div id="app-hook"></div>
+```
+
+Make sure to use `ember deploy production` and ensure assets are correctly on
+s3 before attempting to load the app in your static site.
+
 ## Prerequisites
 
 You will need the following things properly installed on your computer.
@@ -50,4 +88,3 @@ Specify what it takes to deploy your app.
 * Development Browser Extensions
   * [ember inspector for chrome](https://chrome.google.com/webstore/detail/ember-inspector/bmdblncegkenkacieihfhpjfppoconhi)
   * [ember inspector for firefox](https://addons.mozilla.org/en-US/firefox/addon/ember-inspector/)
-
